@@ -12,13 +12,13 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.Diagnostic;
 import javax.tools.Diagnostic.Kind;
 
 import xdean.annotation.processor.annotation.SupportedAnnotation;
@@ -65,21 +65,25 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    Set<String> set = new HashSet<>(super.getSupportedAnnotationTypes());
+    Set<String> set = new HashSet<>();
+    // Analyze @SupportedAnnotationTypes
+    SupportedAnnotationTypes sat = this.getClass().getAnnotation(SupportedAnnotationTypes.class);
+    if (sat != null) {
+      Arrays.stream(sat.value()).forEach(set::add);
+    }
+    // Analyze @SupportedAnnotation(s)
     SupportedAnnotations sas = this.getClass().getAnnotation(SupportedAnnotations.class);
     if (sas == null) {
       SupportedAnnotation sa = this.getClass().getAnnotation(SupportedAnnotation.class);
-      if (sa == null) {
-        if (isInitialized()) {
-          processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
-              "No SupportedAnnotationTypes annotation " + "found on " + this.getClass().getName()
-                  + ", returning an empty set.");
-        }
-      } else {
+      if (sa != null) {
         set.add(sa.value().getCanonicalName());
       }
     } else {
       Arrays.stream(sas.value()).map(sa -> sa.value().getCanonicalName()).forEach(set::add);
+    }
+    if (set.isEmpty() && isInitialized()) {
+      debug().log("No SupportedAnnotationTypes annotation found on " + this.getClass().getName()
+          + ", returning an empty set.");
     }
     return set;
   }
@@ -146,19 +150,19 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       this.enable = enable;
     }
 
-    protected void log(String msg) {
+    public void log(String msg) {
       if (enable) {
         messager.printMessage(kind, msg);
       }
     }
 
-    protected void log(String msg, Element element) {
+    public void log(String msg, Element element) {
       if (enable) {
         messager.printMessage(kind, msg, element);
       }
     }
 
-    protected void log(String msg, Element element, Class<? extends Annotation> annotation) {
+    public void log(String msg, Element element, Class<? extends Annotation> annotation) {
       if (enable) {
         Optional<AnnotationMirror> am = getAnnotationMirror(element, annotation);
         if (am.isPresent()) {
@@ -169,13 +173,13 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       }
     }
 
-    protected void log(String msg, Element element, AnnotationMirror annotation) {
+    public void log(String msg, Element element, AnnotationMirror annotation) {
       if (enable) {
         messager.printMessage(kind, msg, element, annotation);
       }
     }
 
-    protected void log(String msg, Element element, Class<? extends Annotation> annotation, AnnotationValue av) {
+    public void log(String msg, Element element, Class<? extends Annotation> annotation, AnnotationValue av) {
       if (enable) {
         Optional<AnnotationMirror> am = getAnnotationMirror(element, annotation);
         if (am.isPresent()) {
@@ -186,7 +190,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       }
     }
 
-    protected void log(String msg, Element element, AnnotationMirror annotation, AnnotationValue av) {
+    public void log(String msg, Element element, AnnotationMirror annotation, AnnotationValue av) {
       if (enable) {
         messager.printMessage(kind, msg, element, annotation, av);
       }
