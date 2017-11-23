@@ -4,10 +4,9 @@ import static xdean.annotation.processor.ElementUtil.getAnnotationMirror;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -66,6 +65,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
+    Set<String> set = new HashSet<>(super.getSupportedAnnotationTypes());
     SupportedAnnotations sas = this.getClass().getAnnotation(SupportedAnnotations.class);
     if (sas == null) {
       SupportedAnnotation sa = this.getClass().getAnnotation(SupportedAnnotation.class);
@@ -75,13 +75,13 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
               "No SupportedAnnotationTypes annotation " + "found on " + this.getClass().getName()
                   + ", returning an empty set.");
         }
-        return Collections.emptySet();
       } else {
-        return Collections.singleton(sa.value().getName());
+        set.add(sa.value().getCanonicalName());
       }
     } else {
-      return Arrays.stream(sas.value()).map(sa -> sa.value().getName()).collect(Collectors.toSet());
+      Arrays.stream(sas.value()).map(sa -> sa.value().getCanonicalName()).forEach(set::add);
     }
+    return set;
   }
 
   /****************************** ASSERT **********************************/
