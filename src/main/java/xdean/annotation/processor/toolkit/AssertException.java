@@ -1,7 +1,6 @@
 package xdean.annotation.processor.toolkit;
 
 public class AssertException extends RuntimeException {
-
   public AssertException() {
     super();
   }

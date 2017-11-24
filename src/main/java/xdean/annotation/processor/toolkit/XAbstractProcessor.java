@@ -4,6 +4,7 @@ import static xdean.annotation.processor.toolkit.ElementUtil.getAnnotationMirror
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +25,19 @@ import javax.tools.Diagnostic.Kind;
 import xdean.annotation.processor.toolkit.annotation.SupportedAnnotation;
 import xdean.annotation.processor.toolkit.annotation.SupportedAnnotations;
 
+/**
+ * An more powerful abstract annotation processor designed to be a convenient superclass for most concrete annotation
+ * processors.
+ * <p>
+ * Differences with {@link AbstractProcessor}:
+ * <ul>
+ * <li>Use {@link SupportedAnnotation} to define supported annotation by Class instead of String</li>
+ * <li>Assert methods for quick exit rather than check and return</li>
+ * <li>Convenient access to common utilities and log</li>
+ * </ul>
+ *
+ * @author XDean
+ */
 public abstract class XAbstractProcessor extends AbstractProcessor {
 
   protected Types types;
@@ -32,6 +46,9 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
   protected boolean isDebug;
   private Log error, warning, debug;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
@@ -44,18 +61,46 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
     debug = new Log(Kind.NOTE, isDebug);
   }
 
+  /**
+   * Use {@link #processActual(Set, RoundEnvironment)}
+   */
   @Override
   public final boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     handleAssert(() -> processActual(annotations, roundEnv));
     return false;
   }
 
+  /**
+   * Processes a set of annotation types on type elements originating from the prior round and returns whether or not
+   * these annotation types are claimed by this processor. If {@code
+   * true} is returned, the annotation types are claimed and subsequent processors will not be asked to process them; if
+   * {@code false} is returned, the annotation types are unclaimed and subsequent processors may be asked to process
+   * them. A processor may always return the same boolean value or may vary the result based on chosen criteria.
+   *
+   * <p>
+   * The input set will be empty if the processor supports {@code
+   * "*"} and the root elements have no annotations. A {@code
+   * Processor} must gracefully handle an empty set of annotations.
+   *
+   * @param annotations the annotation types requested to be processed
+   * @param roundEnv environment for information about the current and prior round
+   * @return whether or not the set of annotation types are claimed by this processor
+   * @throws AssertException throw the AssertException to quit the process directly
+   * @see #assertThat(boolean)
+   * @see #handleAssert(Runnable)
+   */
   public abstract boolean processActual(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
       throws AssertException;
 
-  protected void handleAssert(Runnable r) {
+  /**
+   * Override this method to do something for {@link AssertException}.<br>
+   * The default behavior is log the message as error if present.
+   *
+   * @param task task who will throw AssertException
+   */
+  protected void handleAssert(Runnable task) {
     try {
-      r.run();
+      task.run();
     } catch (AssertException e) {
       if (e.getMessage() != null && !e.getMessage().isEmpty()) {
         error().log(e.getMessage());
@@ -63,6 +108,11 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
     }
   }
 
+  /**
+   * If the processor class is annotated with {@link SupportedAnnotation} or {@link SupportedAnnotationTypes}, return an
+   * unmodifiable set with the same set of strings as the annotation. If the class is not so annotated, an empty set is
+   * returned.
+   */
   @Override
   public Set<String> getSupportedAnnotationTypes() {
     Set<String> set = new HashSet<>();
@@ -85,7 +135,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       debug().log("No SupportedAnnotationTypes annotation found on " + this.getClass().getName()
           + ", returning an empty set.");
     }
-    return set;
+    return Collections.unmodifiableSet(set);
   }
 
   /****************************** ASSERT **********************************/
@@ -103,6 +153,12 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       this.fail = !assertion;
     }
 
+    /**
+     * If the assert fail, throw an {@link AssertException} with given message. Or return the success value.
+     *
+     * @param msg the fail message
+     * @return if success, return the value
+     */
     public T message(String msg) {
       if (fail) {
         throw new AssertException(msg);
@@ -110,12 +166,28 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
       return value;
     }
 
+    /**
+     * If the assert fail, do the task and then throw an {@link AssertException}. Or return the success value.
+     *
+     * @param task the task to do when fail
+     * @return if success, return the value
+     */
     public T todo(Runnable task) {
       if (fail) {
         task.run();
         throw new AssertException();
       }
       return value;
+    }
+
+    /**
+     * If the assert fail, throw an {@link AssertException}. Or return the success value.
+     *
+     * @return if success, return the value
+     */
+    public T doNoThing() {
+      return todo(() -> {
+      });
     }
   }
 
