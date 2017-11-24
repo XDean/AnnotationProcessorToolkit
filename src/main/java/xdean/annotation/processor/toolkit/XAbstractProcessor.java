@@ -200,6 +200,10 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
     return new Assert<>((T) o, clz.isInstance(o));
   }
 
+  protected <T> Assert<T> assertNonNull(T t) {
+    return new Assert<>(t, t != null);
+  }
+
   /****************************** LOG *******************************/
   protected Log debug() {
     return debug;
