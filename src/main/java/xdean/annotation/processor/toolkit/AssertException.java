@@ -1,4 +1,4 @@
-package xdean.annotation.processor;
+package xdean.annotation.processor.toolkit;
 
 public class AssertException extends RuntimeException {
 

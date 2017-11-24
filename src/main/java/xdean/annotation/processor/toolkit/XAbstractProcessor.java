@@ -1,6 +1,6 @@
-package xdean.annotation.processor;
+package xdean.annotation.processor.toolkit;
 
-import static xdean.annotation.processor.ElementUtil.getAnnotationMirror;
+import static xdean.annotation.processor.toolkit.ElementUtil.getAnnotationMirror;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -21,8 +21,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic.Kind;
 
-import xdean.annotation.processor.annotation.SupportedAnnotation;
-import xdean.annotation.processor.annotation.SupportedAnnotations;
+import xdean.annotation.processor.toolkit.annotation.SupportedAnnotation;
+import xdean.annotation.processor.toolkit.annotation.SupportedAnnotations;
 
 public abstract class XAbstractProcessor extends AbstractProcessor {
 
