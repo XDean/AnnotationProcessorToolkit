@@ -44,7 +44,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
   protected Elements elements;
   protected Messager messager;
   protected boolean isDebug;
-  private Log error, warning, debug;
+  private Log error, warning, debug, noLog = new Log(Kind.OTHER, false);
 
   /**
    * {@inheritDoc}
@@ -206,15 +206,15 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
 
   /****************************** LOG *******************************/
   protected Log debug() {
-    return debug;
+    return isInitialized() ? debug : noLog;
   }
 
   protected Log warning() {
-    return warning;
+    return isInitialized() ? warning : noLog;
   }
 
   protected Log error() {
-    return error;
+    return isInitialized() ? error : noLog;
   }
 
   protected class Log {
