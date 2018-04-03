@@ -8,8 +8,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -38,11 +40,12 @@ import xdean.annotation.processor.toolkit.annotation.SupportedAnnotations;
  *
  * @author XDean
  */
-public abstract class XAbstractProcessor extends AbstractProcessor {
+public abstract class XAbstractProcessor extends AbstractProcessor implements Util {
 
   protected Types types;
   protected Elements elements;
   protected Messager messager;
+  protected Filer filer;
   protected boolean isDebug;
   private Log error, warning, debug, noLog = new Log(Kind.OTHER, false);
 
@@ -55,6 +58,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
     messager = processingEnv.getMessager();
     types = processingEnv.getTypeUtils();
     elements = processingEnv.getElementUtils();
+    filer = processingEnv.getFiler();
     isDebug = processingEnv.getOptions().containsKey("debug");
     error = new Log(Kind.ERROR, true);
     warning = new Log(Kind.WARNING, true);
@@ -202,6 +206,14 @@ public abstract class XAbstractProcessor extends AbstractProcessor {
 
   protected <T> Assert<T> assertNonNull(T t) {
     return new Assert<>(t, t != null);
+  }
+
+  protected <T> Assert<T> assertDo(Callable<T> task){
+    try {
+      return new Assert<>(task.call(), true);
+    } catch (Exception e) {
+      return new Assert<>(false);
+    }
   }
 
   /****************************** LOG *******************************/
