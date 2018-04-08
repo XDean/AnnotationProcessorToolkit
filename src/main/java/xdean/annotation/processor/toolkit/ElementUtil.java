@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.RoundEnvironment;
@@ -13,6 +14,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -35,6 +37,18 @@ public interface ElementUtil {
       return elements.getTypeElement(func.apply(anno).getCanonicalName()).asType();
     } catch (MirroredTypeException e) {
       return e.getTypeMirror();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Annotation> List<TypeMirror> getAnnotationClassArray(
+      Elements elements, T anno, Function<T, Class<?>[]> func) {
+    try {
+      return Arrays.stream(func.apply(anno))
+          .<TypeMirror> map(c -> elements.getTypeElement(c.getCanonicalName()).asType())
+          .collect(Collectors.toList());
+    } catch (MirroredTypesException e) {
+      return (List<TypeMirror>) e.getTypeMirrors();
     }
   }
 
