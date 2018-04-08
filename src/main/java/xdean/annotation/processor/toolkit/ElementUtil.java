@@ -1,21 +1,28 @@
 package xdean.annotation.processor.toolkit;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
-public class ElementUtil {
+public interface ElementUtil {
 
   /**
-   * For Class attribute, if we invoke directly, it will throw {@link MirroredTypeException}. Use this method to get the
-   * Class value safely.
+   * For Class attribute, if we invoke directly, it will throw
+   * {@link MirroredTypeException}. Use this method to get the Class value
+   * safely.
    *
    * @param elements Elements for convert Class to TypeMirror
    * @param anno annotation object
@@ -38,8 +45,7 @@ public class ElementUtil {
    * @param annotationClass the annotation class
    * @return the AnnotationMirror
    */
-  public static Optional<AnnotationMirror> getAnnotationMirror(
-      Element element, Class<? extends Annotation> annotationClass) {
+  public static Optional<AnnotationMirror> getAnnotationMirror(Element element, Class<? extends Annotation> annotationClass) {
     return getAnnotationMirror(element, annotationClass.getCanonicalName());
   }
 
@@ -50,8 +56,7 @@ public class ElementUtil {
    * @param annotationType the annotation {@link TypeMirror}
    * @return the AnnotationMirror
    */
-  public static Optional<AnnotationMirror> getAnnotationMirror(
-      Element element, TypeMirror annotationType) {
+  public static Optional<AnnotationMirror> getAnnotationMirror(Element element, TypeMirror annotationType) {
     return getAnnotationMirror(element, annotationType.toString());
   }
 
@@ -70,5 +75,20 @@ public class ElementUtil {
       }
     }
     return Optional.empty();
+  }
+
+  public static Stream<TypeElement> getAllSubClasses(Types types, RoundEnvironment env, TypeMirror type) {
+    return env.getRootElements()
+        .stream()
+        .flatMap(e -> getAllSubClasses(types, e, type));
+  }
+
+  public static Stream<TypeElement> getAllSubClasses(Types types, Element root, TypeMirror type) {
+    List<ElementKind> list = Arrays.asList(ElementKind.CLASS, ElementKind.ENUM, ElementKind.INTERFACE);
+    return Stream.concat(Stream.of(root)
+        .filter(e -> list.contains(e.getKind()))
+        .map(e -> (TypeElement) e)
+        .filter(e -> types.isAssignable(types.erasure(e.asType()), type)),
+        root.getEnclosedElements().stream().flatMap(e -> getAllSubClasses(types, e, type)));
   }
 }

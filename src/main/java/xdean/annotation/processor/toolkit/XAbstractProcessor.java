@@ -40,7 +40,7 @@ import xdean.annotation.processor.toolkit.annotation.SupportedAnnotations;
  *
  * @author XDean
  */
-public abstract class XAbstractProcessor extends AbstractProcessor implements Util {
+public abstract class XAbstractProcessor extends AbstractProcessor implements CommonUtil {
 
   protected Types types;
   protected Elements elements;

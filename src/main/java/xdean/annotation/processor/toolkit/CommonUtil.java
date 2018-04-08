@@ -3,7 +3,7 @@ package xdean.annotation.processor.toolkit;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public interface Util {
+public interface CommonUtil {
   static String getStackTraceString(Throwable tr) {
     if (tr == null) {
       return "";
