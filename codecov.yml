@@ -26,3 +26,6 @@ comment:
   require_changes: no
   
 ignore:
+#generated
+  - "src/main/java/xdean/annotation/processor/toolkit/CommonUtil.java"
+#end

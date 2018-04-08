@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import xdean.codecov.CodecovIgnore;
+
+@CodecovIgnore
 public interface CommonUtil {
   static String getStackTraceString(Throwable tr) {
     if (tr == null) {
