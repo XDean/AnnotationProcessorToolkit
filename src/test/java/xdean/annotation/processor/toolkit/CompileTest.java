@@ -10,9 +10,11 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 
+@Ignore
 @RunWith(CompileTestRunner.class)
 public class CompileTest extends XAbstractProcessor {
   private FrameworkMethod method;
