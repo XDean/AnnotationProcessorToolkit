@@ -1,8 +1,12 @@
 package xdean.annotation.processor.toolkit;
 
+import static org.junit.Assert.*;
+
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 
 import org.junit.Test;
@@ -67,5 +71,29 @@ public class ElementUtilTest extends CompileTest {
         .assertValues(
             "xdean.annotation.processor.toolkit.getClass.A",
             "xdean.annotation.processor.toolkit.getClass.B");
+  }
+
+  @Test
+  @Compile(sources = {
+      "inherit/A.java",
+      "inherit/B.java",
+      "inherit/C.java",
+      "inherit/D.java",
+      "inherit/Inherit.java",
+      "inherit/NotInherit.java",
+  })
+  public void testInherit(RoundEnvironment env) throws Exception {
+    TypeElement c = elements.getTypeElement("xdean.annotation.processor.toolkit.inherit.C");
+    List<? extends AnnotationMirror> cAnno = ElementUtil.getInheritAnnotationMirrors(c);
+    assertEquals(1, cAnno.size());
+    assertEquals("2", cAnno.get(0).getElementValues().values().stream().findFirst().get().toString());
+
+    TypeElement d = elements.getTypeElement("xdean.annotation.processor.toolkit.inherit.D");
+    List<? extends AnnotationMirror> dAnno = ElementUtil.getInheritAnnotationMirrors(d);
+    assertEquals(2, dAnno.size());
+    Object o1 = dAnno.get(0).getElementValues().values().stream().findFirst().get().getValue();
+    Object o2 = dAnno.get(1).getElementValues().values().stream().findFirst().get().getValue();
+    assertEquals(4, o1);
+    assertEquals(2, o2);
   }
 }

@@ -1,8 +1,11 @@
 package xdean.annotation.processor.toolkit;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Inherited;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -13,8 +16,10 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
+import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -59,7 +64,8 @@ public interface ElementUtil {
    * @param annotationClass the annotation class
    * @return the AnnotationMirror
    */
-  public static Optional<AnnotationMirror> getAnnotationMirror(Element element, Class<? extends Annotation> annotationClass) {
+  public static Optional<AnnotationMirror> getAnnotationMirror(Element element,
+      Class<? extends Annotation> annotationClass) {
     return getAnnotationMirror(element, annotationClass.getCanonicalName());
   }
 
@@ -89,6 +95,26 @@ public interface ElementUtil {
       }
     }
     return Optional.empty();
+  }
+
+  public static List<? extends AnnotationMirror> getInheritAnnotationMirrors(TypeElement element) {
+    if (element.getKind() != ElementKind.CLASS || element.getSuperclass() instanceof NoType) {
+      return element.getAnnotationMirrors();
+    }
+    TypeElement sup = (TypeElement) ((DeclaredType) element.getSuperclass()).asElement();
+    List<AnnotationMirror> list = new ArrayList<>(element.getAnnotationMirrors());
+    List<AnnotationMirror> collect = getInheritAnnotationMirrors(sup)
+        .stream()
+        .filter(a -> isInherit(a.getAnnotationType()))
+        .filter(a -> !list.stream()
+            .anyMatch(t -> Objects.equals(t.getAnnotationType(), a.getAnnotationType())))
+        .collect(Collectors.toList());
+    list.addAll(collect);
+    return list;
+  }
+
+  public static boolean isInherit(DeclaredType annoType) {
+    return getAnnotationMirror(annoType.asElement(), Inherited.class).isPresent();
   }
 
   public static Stream<TypeElement> getAllSubClasses(Types types, RoundEnvironment env, TypeMirror type) {
