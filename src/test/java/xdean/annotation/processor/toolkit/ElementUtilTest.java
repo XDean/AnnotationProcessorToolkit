@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import io.reactivex.Observable;
 import xdean.annotation.processor.toolkit.getClass.Anno;
+import xdean.annotation.processor.toolkit.test.Compile;
+import xdean.annotation.processor.toolkit.test.CompileTest;
 
 public class ElementUtilTest extends CompileTest {
 

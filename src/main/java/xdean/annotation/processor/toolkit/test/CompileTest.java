@@ -1,4 +1,4 @@
-package xdean.annotation.processor.toolkit;
+package xdean.annotation.processor.toolkit.test;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +13,8 @@ import javax.lang.model.element.TypeElement;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
+
+import xdean.annotation.processor.toolkit.XAbstractProcessor;
 
 @Ignore
 @RunWith(CompileTestRunner.class)

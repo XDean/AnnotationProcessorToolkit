@@ -1,4 +1,4 @@
-package xdean.annotation.processor.toolkit;
+package xdean.annotation.processor.toolkit.test;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

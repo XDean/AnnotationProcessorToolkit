@@ -1,4 +1,4 @@
-package xdean.annotation.processor.toolkit;
+package xdean.annotation.processor.toolkit.test;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
