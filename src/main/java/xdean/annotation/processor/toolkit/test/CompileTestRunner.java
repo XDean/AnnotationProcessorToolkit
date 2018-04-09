@@ -13,6 +13,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compiler;
@@ -48,7 +49,7 @@ public class CompileTestRunner extends BlockJUnit4ClassRunner {
       return new Statement() {
         @Override
         public void evaluate() throws Throwable {
-          Compile compile = method.getAnnotation(Compile.class);
+          Compile compile = AnnotationUtils.getAnnotation(method.getMethod(), Compile.class);
           Class<?> clz = getTestClass().getJavaClass();
           Compiler.javac()
               .withProcessors(ct)
@@ -65,9 +66,9 @@ public class CompileTestRunner extends BlockJUnit4ClassRunner {
       return new Statement() {
         @Override
         public void evaluate() throws Throwable {
-          Compiled compiled = method.getAnnotation(Compiled.class);
+          Compiled compiled = AnnotationUtils.getAnnotation(method.getMethod(), Compiled.class);
           Class<?> clz = getTestClass().getJavaClass();
-          Compiler.javac()
+          Compilation compilation = Compiler.javac()
               .withProcessors(Arrays.stream(compiled.processors())
                   .map(c -> CommonUtil.uncheck(() -> c.newInstance()))
                   .toArray(Processor[]::new))
@@ -76,6 +77,7 @@ public class CompileTestRunner extends BlockJUnit4ClassRunner {
                   .map(s -> clz.getResource(s))
                   .map(u -> JavaFileObjects.forResource(u))
                   .toArray(JavaFileObject[]::new));
+          method.invokeExplosively(ct, compilation);
         }
       };
     } else {
