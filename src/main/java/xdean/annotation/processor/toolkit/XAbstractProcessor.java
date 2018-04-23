@@ -206,7 +206,16 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
   }
 
+  protected <T> Assert<T> assertThat(T t, boolean b) {
+    return new Assert<>(t, b);
+  }
+
+  @Deprecated
   protected Assert<Void> assertThat(boolean b) {
+    return assertTrue(b);
+  }
+
+  protected Assert<Void> assertTrue(boolean b) {
     return new Assert<>(b);
   }
 
