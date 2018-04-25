@@ -107,6 +107,8 @@ public class CompileTestRunner extends BlockJUnit4ClassRunner {
         } else {
           errors.add(new Exception("Method " + method.getName() + "()'s parameter only can be RoundEnvironment or Compilation."));
         }
+      } else {
+        method.validatePublicVoidNoArg(isStatic, errors);
       }
     }
   }
