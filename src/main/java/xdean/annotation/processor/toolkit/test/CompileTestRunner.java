@@ -92,7 +92,7 @@ public class CompileTestRunner extends BlockJUnit4ClassRunner {
     for (FrameworkMethod method : methods) {
       method.validatePublicVoid(isStatic, errors);
       int pc = method.getMethod().getParameterCount();
-      if (pc != 1) {
+      if (pc > 1) {
         errors.add(new Exception("Method " + method.getName() + "() should have 0 or 1 parameter"));
       } else if (pc == 1) {
         Class<?> paramType = method.getMethod().getParameterTypes()[0];
