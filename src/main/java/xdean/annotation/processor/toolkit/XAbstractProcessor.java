@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -206,16 +207,15 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
   }
 
+  protected <T> Assert<T> assertThat(T t, Predicate<T> b) {
+    return new Assert<>(t, b.test(t));
+  }
+
   protected <T> Assert<T> assertThat(T t, boolean b) {
     return new Assert<>(t, b);
   }
 
-  @Deprecated
   protected Assert<Void> assertThat(boolean b) {
-    return assertTrue(b);
-  }
-
-  protected Assert<Void> assertTrue(boolean b) {
     return new Assert<>(b);
   }
 
