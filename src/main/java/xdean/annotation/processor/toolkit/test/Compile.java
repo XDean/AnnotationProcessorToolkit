@@ -14,7 +14,7 @@ import javax.lang.model.SourceVersion;
 @Target(METHOD)
 @Documented
 public @interface Compile {
-  String[] sources() default {};
+  String[] sources();
 
   Class<? extends Annotation>[] annotations() default {};
 

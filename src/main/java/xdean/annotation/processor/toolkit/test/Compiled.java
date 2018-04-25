@@ -13,7 +13,7 @@ import javax.annotation.processing.Processor;
 @Target(METHOD)
 @Documented
 public @interface Compiled {
-  String[] sources() default {};
+  String[] sources();
 
   Class<? extends Processor>[] processors() default {};
 
