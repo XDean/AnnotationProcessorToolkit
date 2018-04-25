@@ -10,10 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import xdean.codecov.CodecovIgnore;
-import xdean.jex.log.LogFactory;
-
-@CodecovIgnore
 public interface CommonUtil {
   static String getStackTraceString(Throwable tr) {
     if (tr == null) {
@@ -65,7 +61,6 @@ public interface CommonUtil {
     try {
       task.call();
     } catch (Exception t) {
-      LogFactory.from(CommonUtil.class).debug("uncatch", t);
     }
   }
 
