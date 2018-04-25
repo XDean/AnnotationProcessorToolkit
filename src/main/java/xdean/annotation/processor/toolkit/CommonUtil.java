@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import xdean.codecov.CodecovIgnore;
+import xdean.jex.log.LogFactory;
 
 @CodecovIgnore
 public interface CommonUtil {
@@ -60,10 +61,14 @@ public interface CommonUtil {
     }
   }
 
-  /**
-   * @param task
-   * @return can be null
-   */
+  public static <T> void uncatch(ActionE0<?> task) {
+    try {
+      task.call();
+    } catch (Exception t) {
+      LogFactory.from(CommonUtil.class).debug("uncatch", t);
+    }
+  }
+
   public static <T> T uncatch(FuncE0<T, ?> task) {
     try {
       return task.call();
