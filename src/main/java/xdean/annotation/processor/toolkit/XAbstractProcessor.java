@@ -129,7 +129,9 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
     // Analyze @SupportedAnnotation
     SupportedAnnotation sa = this.getClass().getAnnotation(SupportedAnnotation.class);
-    Arrays.stream(sa.value()).map(Class::getCanonicalName).forEach(set::add);
+    if (sa != null) {
+      Arrays.stream(sa.value()).map(Class::getCanonicalName).forEach(set::add);
+    }
     if (set.isEmpty() && isInitialized()) {
       debug().log("No SupportedAnnotationTypes annotation found on " + this.getClass().getName()
           + ", returning an empty set.");
