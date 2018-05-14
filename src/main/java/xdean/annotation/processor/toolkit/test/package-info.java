@@ -16,10 +16,10 @@
 
 /**
  * Framework to quick build compile test in junit.
- * 
+ *
  * <ol>
  * <li>Compile period test. Use {@code @Compile} on your test method.
- * 
+ *
  * <pre>
  * &#64;Test
  * &#64;Compile(sources = "/HelloWorld.java")
@@ -27,11 +27,11 @@
  *   // Now you are in compile (Annotation Processor) context which is compiling your sources.
  * }
  * </pre>
- * 
+ *
  * </li>
- * 
+ *
  * <li>Compilation test. Use {@code @Compiled} on your test method.
- * 
+ *
  * <pre>
  * &#64;Test
  * &#64;Compiled(sources = "/HelloWorld.java")
@@ -40,10 +40,10 @@
  *   // Do assert on the Compilation.
  * }
  * </pre>
- * 
+ *
  * </li>
- * <ol>
- * 
+ * </ol>
+ *
  * @author Dean Xu (XDean@github.com)
  */
 package xdean.annotation.processor.toolkit.test;
