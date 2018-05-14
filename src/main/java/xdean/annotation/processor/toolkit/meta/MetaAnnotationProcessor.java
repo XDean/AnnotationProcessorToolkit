@@ -24,7 +24,8 @@ import xdean.annotation.processor.toolkit.XAbstractProcessor;
 @AutoService(Processor.class)
 public class MetaAnnotationProcessor extends XAbstractProcessor {
 
-  NestCompileFile meta = new NestCompileFile("META-INF/xdean/apt/Meta");
+  public static final String META_PATH = "META-INF/xdean/apt/";
+  NestCompileFile meta = new NestCompileFile("META-INF/xdean/apt/" + Meta.class.getName());
 
   @Override
   public boolean processActual(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws AssertException {

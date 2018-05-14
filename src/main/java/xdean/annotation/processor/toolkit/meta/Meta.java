@@ -1,7 +1,7 @@
 package xdean.annotation.processor.toolkit.meta;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -13,8 +13,9 @@ import java.lang.annotation.Target;
  * @author Dean Xu (XDean@github.com)
  *
  */
+@Meta
 @Documented
-@Retention(SOURCE)
+@Retention(RUNTIME)
 @Target(ANNOTATION_TYPE)
 public @interface Meta {
 
