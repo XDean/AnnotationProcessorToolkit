@@ -154,8 +154,9 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
   /****************************** ASSERT **********************************/
 
   protected static class Assert<T> {
-    boolean fail;
-    T value;
+    final boolean fail;
+    final T value;
+    final Throwable cause;
 
     public Assert(boolean assertion) {
       this(null, assertion);
@@ -164,6 +165,13 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     public Assert(T value, boolean assertion) {
       this.value = value;
       this.fail = !assertion;
+      this.cause = null;
+    }
+
+    public Assert(Throwable cause) {
+      this.value = null;
+      this.fail = true;
+      this.cause = cause;
     }
 
     /**
@@ -232,7 +240,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     try {
       return new Assert<>(task.call(), true);
     } catch (Exception e) {
-      return new Assert<>(false);
+      return new Assert<>(e);
     }
   }
 
@@ -241,7 +249,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
       task.call();
       return new Assert<>(null, true);
     } catch (Exception e) {
-      return new Assert<>(false);
+      return new Assert<>(e);
     }
   }
 
