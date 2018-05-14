@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.processing.RoundEnvironment;
@@ -57,13 +56,21 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     Map<Boolean, List<Element>> map = roundEnv.getElementsAnnotatedWith(metaClass)
         .stream()
         .collect(Collectors.groupingBy(e -> e.getKind() == ElementKind.ANNOTATION_TYPE));
+    List<Element> annotatedElements = map.getOrDefault(false, Collections.emptyList());
     List<TypeElement> annotatedAnnotations = map.getOrDefault(true, Collections.emptyList()).stream().map(e -> (TypeElement) e)
         .collect(Collectors.toList());
-    List<Element> annotatedElements = map.getOrDefault(false, Collections.emptyList());
-    annotatedElements.forEach(e -> handleAssert(() -> process(roundEnv, e.getAnnotation(metaClass), null, e)));
-    Stream.concat(
-        annotatedAnnotations.stream(),
-        annotatedAnnotationNames.stream().map(s -> elements.getTypeElement(s)))
+    annotatedElements.forEach(e -> handleAssert(() -> {
+      T anno = e.getAnnotation(metaClass);
+      processMeta(roundEnv, anno, e);
+      process(roundEnv, anno, null, e);
+    }));
+    annotatedAnnotations.forEach(te -> handleAssert(() -> {
+      processMeta(roundEnv, te.getAnnotation(metaClass), te);
+      T meta = te.getAnnotation(metaClass);
+      roundEnv.getElementsAnnotatedWith(te).forEach(
+          e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, te.asType()).get(), e)));
+    }));
+    annotatedAnnotationNames.stream().map(s -> elements.getTypeElement(s))
         .forEach(te -> {
           T meta = te.getAnnotation(metaClass);
           roundEnv.getElementsAnnotatedWith(te).forEach(
@@ -73,12 +80,15 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     return false;
   }
 
-  public void writeMetaClasses(List<TypeElement> annotatedAnnotations) throws Error {
+  protected void writeMetaClasses(List<TypeElement> annotatedAnnotations) throws Error {
     try (PrintStream printer = metaFile.getPrintStream(filer)) {
       annotatedAnnotations.forEach(e -> printer.println(e.asType().toString()));
     } catch (IOException e) {
       throw new Error("Error to write meta file.", e);
     }
+  }
+
+  protected void processMeta(RoundEnvironment env, T t, Element element) throws AssertException {
   }
 
   protected abstract void process(RoundEnvironment env, T t, @CheckForNull AnnotationMirror mid, Element element)
