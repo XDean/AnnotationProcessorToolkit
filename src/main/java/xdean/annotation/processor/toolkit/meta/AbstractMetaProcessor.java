@@ -22,6 +22,7 @@ import xdean.annotation.processor.toolkit.AssertException;
 import xdean.annotation.processor.toolkit.ElementUtil;
 import xdean.annotation.processor.toolkit.NestCompileFile;
 import xdean.annotation.processor.toolkit.XAbstractProcessor;
+import xdean.annotation.processor.toolkit.annotation.Meta;
 import xdean.annotation.processor.toolkit.annotation.SupportedMetaAnnotation;
 
 public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstractProcessor {

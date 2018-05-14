@@ -1,4 +1,4 @@
-package xdean.annotation.processor.toolkit.meta;
+package xdean.annotation.processor.toolkit.annotation;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
