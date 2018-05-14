@@ -37,7 +37,7 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     SupportedMetaAnnotation meta = this.getClass().getAnnotation(SupportedMetaAnnotation.class);
     if (meta == null) {
       throw new Error("AbstractMetaProcessor must use with @SupportedMetaAnnotation.");
-    } else if (meta.value().isAnnotationPresent(Meta.class)) {
+    } else if (!meta.value().isAnnotationPresent(Meta.class)) {
       throw new Error("AbstractMetaProcessor only can process Annotation with @Meta.");
     }
     metaClass = (Class<T>) meta.value();
