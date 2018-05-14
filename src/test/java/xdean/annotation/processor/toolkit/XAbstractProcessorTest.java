@@ -40,14 +40,12 @@ public class XAbstractProcessorTest {
   static class B extends XAP {
   }
 
-  @SupportedAnnotation(Test.class)
-  @SupportedAnnotation(Before.class)
+  @SupportedAnnotation({ Test.class, Before.class })
   static class C extends XAP {
   }
 
   @SupportedAnnotationTypes("org.junit.After")
-  @SupportedAnnotation(Test.class)
-  @SupportedAnnotation(Before.class)
+  @SupportedAnnotation({ Test.class, Before.class })
   static class D extends XAP {
   }
 }
