@@ -81,7 +81,8 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     }
   }
 
-  protected abstract void process(RoundEnvironment env, T t, @CheckForNull AnnotationMirror mid, Element element);
+  protected abstract void process(RoundEnvironment env, T t, @CheckForNull AnnotationMirror mid, Element element)
+      throws AssertException;
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
