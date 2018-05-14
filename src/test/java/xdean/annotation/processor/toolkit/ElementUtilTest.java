@@ -1,6 +1,6 @@
 package xdean.annotation.processor.toolkit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,9 +14,9 @@ import org.junit.Test;
 import io.reactivex.Observable;
 import xdean.annotation.processor.toolkit.getClass.Anno;
 import xdean.annotation.processor.toolkit.test.Compile;
-import xdean.annotation.processor.toolkit.test.CompileTest;
+import xdean.annotation.processor.toolkit.test.CompileTestCase;
 
-public class ElementUtilTest extends CompileTest {
+public class ElementUtilTest extends CompileTestCase {
 
   @Test
   @Compile(sources = {
