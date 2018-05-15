@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Google, Inc.
+ * Copyright (C) 2018 XDean.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@
  * </pre>
  *
  * </li>
- * </ol>
+ * <ol>
  *
  * @author Dean Xu (XDean@github.com)
  */
