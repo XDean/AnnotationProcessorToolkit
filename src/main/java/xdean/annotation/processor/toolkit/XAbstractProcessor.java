@@ -28,13 +28,13 @@ import javax.tools.Diagnostic.Kind;
 import xdean.annotation.processor.toolkit.annotation.SupportedAnnotation;
 
 /**
- * An more powerful abstract annotation processor designed to be a convenient superclass for most
- * concrete annotation processors.
+ * An more powerful abstract annotation processor designed to be a convenient
+ * superclass for most concrete annotation processors.
  * <p>
  * Differences with {@link AbstractProcessor}:
  * <ul>
- * <li>Use {@link SupportedAnnotation} to define supported annotation by Class instead of
- * String</li>
+ * <li>Use {@link SupportedAnnotation} to define supported annotation by Class
+ * instead of String</li>
  * <li>Assert methods for quick exit rather than check and return</li>
  * <li>Convenient access to common utilities and log</li>
  * </ul>
@@ -76,12 +76,14 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
   }
 
   /**
-   * Processes a set of annotation types on type elements originating from the prior round and
-   * returns whether or not these annotation types are claimed by this processor. If {@code
-   * true} is returned, the annotation types are claimed and subsequent processors will not be asked
-   * to process them; if {@code false} is returned, the annotation types are unclaimed and
-   * subsequent processors may be asked to process them. A processor may always return the same
-   * boolean value or may vary the result based on chosen criteria.
+   * Processes a set of annotation types on type elements originating from the
+   * prior round and returns whether or not these annotation types are claimed
+   * by this processor. If {@code
+   * true} is returned, the annotation types are claimed and subsequent
+   * processors will not be asked to process them; if {@code false} is returned,
+   * the annotation types are unclaimed and subsequent processors may be asked
+   * to process them. A processor may always return the same boolean value or
+   * may vary the result based on chosen criteria.
    *
    * <p>
    * The input set will be empty if the processor supports {@code
@@ -89,9 +91,12 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
    * Processor} must gracefully handle an empty set of annotations.
    *
    * @param annotations the annotation types requested to be processed
-   * @param roundEnv environment for information about the current and prior round
-   * @return whether or not the set of annotation types are claimed by this processor
-   * @throws AssertException throw the AssertException to quit the process directly
+   * @param roundEnv environment for information about the current and prior
+   *          round
+   * @return whether or not the set of annotation types are claimed by this
+   *         processor
+   * @throws AssertException throw the AssertException to quit the process
+   *           directly
    * @see #assertThat(boolean)
    * @see #handleAssert(Runnable)
    */
@@ -116,8 +121,9 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
 
   /**
    * If the processor class is annotated with {@link SupportedAnnotation} or
-   * {@link SupportedAnnotationTypes}, return an unmodifiable set with the same set of strings as
-   * the annotation. If the class is not so annotated, an empty set is returned.
+   * {@link SupportedAnnotationTypes}, return an unmodifiable set with the same
+   * set of strings as the annotation. If the class is not so annotated, an
+   * empty set is returned.
    */
   @Override
   public Set<String> getSupportedAnnotationTypes() {
@@ -141,7 +147,7 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
 
   /****************************** ASSERT **********************************/
 
-  protected static class Assert<T> {
+  protected class Assert<T> {
     final boolean fail;
     final T value;
     final Throwable cause;
@@ -163,8 +169,8 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * If the assert fail, throw an {@link AssertException} with given message. Or return the
-     * success value.
+     * If the assert fail, throw an {@link AssertException} with given message.
+     * Or return the success value.
      *
      * @param msg the fail message
      * @return if success, return the value
@@ -177,8 +183,8 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * If the assert fail, do the task and then throw an {@link AssertException}. Or return the
-     * success value.
+     * If the assert fail, do the task and then throw an
+     * {@link AssertException}. Or return the success value.
      *
      * @param task the task to do when fail
      * @return if success, return the value
@@ -192,13 +198,38 @@ public abstract class XAbstractProcessor extends AbstractProcessor implements Co
     }
 
     /**
-     * If the assert fail, throw an {@link AssertException}. Or return the success value.
+     * If the assert fail, throw an {@link AssertException}. Or return the
+     * success value.
      *
      * @return if success, return the value
      */
     public T doNoThing() {
       return todo(() -> {
       });
+    }
+
+    public T log(String msg) {
+      return todo(() -> error().log(msg));
+    }
+
+    public T log(String msg, Element element) {
+      return todo(() -> error().log(msg, element));
+    }
+
+    public T log(String msg, Element element, Class<? extends Annotation> annotation) {
+      return todo(() -> error().log(msg, element, annotation));
+    }
+
+    public T log(String msg, Element element, AnnotationMirror annotation) {
+      return todo(() -> error().log(msg, element, annotation));
+    }
+
+    public T log(String msg, Element element, Class<? extends Annotation> annotation, AnnotationValue av) {
+      return todo(() -> error().log(msg, element, annotation, av));
+    }
+
+    public T log(String msg, Element element, AnnotationMirror annotation, AnnotationValue av) {
+      return todo(() -> error().log(msg, element, annotation, av));
     }
   }
 
