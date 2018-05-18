@@ -25,8 +25,6 @@ import xdean.annotation.processor.toolkit.annotation.Meta;
 import xdean.annotation.processor.toolkit.annotation.SupportedMetaAnnotation;
 
 public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstractProcessor {
-  public static final String META_PATH = "META-INF/xdean/apt/";
-
   protected final Class<T> metaClass;
   protected final NestCompileFile metaFile;
   protected final Set<String> annotatedAnnotationNames;
@@ -40,7 +38,7 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
       throw new Error("AbstractMetaProcessor only can process Annotation with @Meta.");
     }
     metaClass = (Class<T>) meta.value();
-    metaFile = new NestCompileFile(META_PATH + meta.value().getCanonicalName());
+    metaFile = new NestCompileFile(metaPath(metaClass));
     try {
       annotatedAnnotationNames = metaFile.readLines().collect(Collectors.toSet());
     } catch (IOException e) {
@@ -93,6 +91,10 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
 
   protected abstract void process(RoundEnvironment env, T t, @CheckForNull AnnotationMirror mid, Element element)
       throws AssertException;
+
+  protected String metaPath(Class<?> metaClass) {
+    return "META-INF/META-ANNOTATION/" + metaClass.getCanonicalName();
+  }
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
