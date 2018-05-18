@@ -12,32 +12,23 @@
   <description>Annotation Processor Develop Toolkit</description>
   <url>https://github.com/XDean/AnnotationProcessorToolkit</url>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.github.XDean</groupId>
-        <artifactId>dependency-parent</artifactId>
-        <version>1.1</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.github.XDean</groupId>
       <artifactId>compile-testing</artifactId>
+      <version>1.0.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.reactivex.rxjava2</groupId>
       <artifactId>rxjava</artifactId>
+      <version>2.1.9</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.auto.service</groupId>
       <artifactId>auto-service</artifactId>
+      <version>1.0-rc3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
