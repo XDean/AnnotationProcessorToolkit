@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -89,7 +88,7 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
   protected void processMeta(RoundEnvironment env, T t, Element element) throws AssertException {
   }
 
-  protected abstract void process(RoundEnvironment env, T t, @CheckForNull AnnotationMirror mid, Element element)
+  protected abstract void process(RoundEnvironment env, T t, AnnotationMirror mid, Element element)
       throws AssertException;
 
   protected String metaPath(Class<?> metaClass) {
