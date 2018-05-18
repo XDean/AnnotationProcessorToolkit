@@ -5,7 +5,6 @@ import java.lang.annotation.Inherited;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -97,17 +96,17 @@ public interface ElementUtil {
     return Optional.empty();
   }
 
-  public static List<? extends AnnotationMirror> getInheritAnnotationMirrors(TypeElement element) {
+  public static List<? extends AnnotationMirror> getInheritAnnotationMirrors(TypeElement element, Types types) {
     if (element.getKind() != ElementKind.CLASS || element.getSuperclass() instanceof NoType) {
       return element.getAnnotationMirrors();
     }
     TypeElement sup = (TypeElement) ((DeclaredType) element.getSuperclass()).asElement();
     List<AnnotationMirror> list = new ArrayList<>(element.getAnnotationMirrors());
-    List<AnnotationMirror> collect = getInheritAnnotationMirrors(sup)
+    List<AnnotationMirror> collect = getInheritAnnotationMirrors(sup, types)
         .stream()
         .filter(a -> isInherit(a.getAnnotationType()))
         .filter(a -> !list.stream()
-            .anyMatch(t -> Objects.equals(t.getAnnotationType(), a.getAnnotationType())))
+            .anyMatch(t -> types.isSameType(t.getAnnotationType(), a.getAnnotationType())))
         .collect(Collectors.toList());
     list.addAll(collect);
     return list;

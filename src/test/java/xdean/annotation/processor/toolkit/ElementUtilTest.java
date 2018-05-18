@@ -84,12 +84,12 @@ public class ElementUtilTest extends CompileTestCase {
   })
   public void testInherit(RoundEnvironment env) throws Exception {
     TypeElement c = elements.getTypeElement("xdean.annotation.processor.toolkit.inherit.C");
-    List<? extends AnnotationMirror> cAnno = ElementUtil.getInheritAnnotationMirrors(c);
+    List<? extends AnnotationMirror> cAnno = ElementUtil.getInheritAnnotationMirrors(c, types);
     assertEquals(1, cAnno.size());
     assertEquals("2", cAnno.get(0).getElementValues().values().stream().findFirst().get().toString());
 
     TypeElement d = elements.getTypeElement("xdean.annotation.processor.toolkit.inherit.D");
-    List<? extends AnnotationMirror> dAnno = ElementUtil.getInheritAnnotationMirrors(d);
+    List<? extends AnnotationMirror> dAnno = ElementUtil.getInheritAnnotationMirrors(d, types);
     assertEquals(2, dAnno.size());
     Object o1 = dAnno.get(0).getElementValues().values().stream().findFirst().get().getValue();
     Object o2 = dAnno.get(1).getElementValues().values().stream().findFirst().get().getValue();
