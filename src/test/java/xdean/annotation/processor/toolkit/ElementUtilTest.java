@@ -9,8 +9,6 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 
-import org.junit.Test;
-
 import io.reactivex.Observable;
 import xdean.annotation.processor.toolkit.getClass.Anno;
 import xdean.test.compile.Compile;
@@ -18,7 +16,6 @@ import xdean.test.compile.CompileTestCase;
 
 public class ElementUtilTest extends CompileTestCase {
 
-  @Test
   @Compile(sources = {
       "getSub/A.java",
       "getSub/B.java",
@@ -39,7 +36,6 @@ public class ElementUtilTest extends CompileTestCase {
         .assertValues("A", "C");
   }
 
-  @Test
   @Compile(sources = {
       "getClass/HaveCompiled.java",
       "getClass/NotCompiled.java"
@@ -73,7 +69,6 @@ public class ElementUtilTest extends CompileTestCase {
             "xdean.annotation.processor.toolkit.getClass.B");
   }
 
-  @Test
   @Compile(sources = {
       "inherit/A.java",
       "inherit/B.java",
