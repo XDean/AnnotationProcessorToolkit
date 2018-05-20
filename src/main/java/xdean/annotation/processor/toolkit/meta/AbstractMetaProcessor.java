@@ -15,12 +15,15 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 
 import xdean.annotation.processor.toolkit.AssertException;
 import xdean.annotation.processor.toolkit.ElementUtil;
 import xdean.annotation.processor.toolkit.NestCompileFile;
 import xdean.annotation.processor.toolkit.XAbstractProcessor;
 import xdean.annotation.processor.toolkit.annotation.Meta;
+import xdean.annotation.processor.toolkit.annotation.MetaFor;
 import xdean.annotation.processor.toolkit.annotation.SupportedMetaAnnotation;
 
 public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstractProcessor {
@@ -64,14 +67,18 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     annotatedAnnotations.forEach(te -> handleAssert(() -> {
       processMeta(roundEnv, te.getAnnotation(metaClass), te);
       T meta = te.getAnnotation(metaClass);
-      roundEnv.getElementsAnnotatedWith(te).forEach(
-          e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, te.asType()).get(), e)));
+      TypeElement actual = handleMetaFor(te);
+      TypeMirror actualType = actual.asType();
+      roundEnv.getElementsAnnotatedWith(actual).forEach(
+          e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, actualType).get(), e)));
     }));
     annotatedAnnotationNames.stream().map(s -> elements.getTypeElement(s))
         .forEach(te -> {
           T meta = te.getAnnotation(metaClass);
-          roundEnv.getElementsAnnotatedWith(te).forEach(
-              e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, te.asType()).get(), e)));
+          TypeElement actual = handleMetaFor(te);
+          TypeMirror actualType = actual.asType();
+          roundEnv.getElementsAnnotatedWith(actual).forEach(
+              e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, actualType).get(), e)));
         });
     writeMetaClasses(annotatedAnnotations);
     return false;
@@ -82,6 +89,15 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
       annotatedAnnotations.forEach(e -> printer.println(e.asType().toString()));
     } catch (IOException e) {
       throw new Error("Error to write meta file.", e);
+    }
+  }
+
+  protected TypeElement handleMetaFor(TypeElement origin) {
+    MetaFor metaFor = origin.getAnnotation(MetaFor.class);
+    if (metaFor == null) {
+      return origin;
+    } else {
+      return (TypeElement) ((DeclaredType) ElementUtil.getAnnotationClassValue(elements, metaFor, m -> m.value())).asElement();
     }
   }
 
