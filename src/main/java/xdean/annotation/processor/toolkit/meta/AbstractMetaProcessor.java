@@ -73,13 +73,13 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
           e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, actualType).get(), e)));
     }));
     annotatedAnnotationNames.stream().map(s -> elements.getTypeElement(s))
-        .forEach(te -> {
+        .forEach(te -> handleAssert(() -> {
           T meta = te.getAnnotation(metaClass);
           TypeElement actual = handleMetaFor(te);
           TypeMirror actualType = actual.asType();
           roundEnv.getElementsAnnotatedWith(actual).forEach(
               e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, actualType).get(), e)));
-        });
+        }));
     writeMetaClasses(annotatedAnnotations);
     return false;
   }
@@ -97,7 +97,10 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     if (metaFor == null) {
       return origin;
     } else {
-      return (TypeElement) ((DeclaredType) ElementUtil.getAnnotationClassValue(elements, metaFor, m -> m.value())).asElement();
+      Element target = ((DeclaredType) ElementUtil.getAnnotationClassValue(elements, metaFor, m -> m.value())).asElement();
+      assertThat(target.getAnnotation(metaClass) == null).log("Target class already have this meta annotation.", origin,
+          ElementUtil.getAnnotationMirror(origin, metaClass).get());
+      return (TypeElement) target;
     }
   }
 
