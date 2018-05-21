@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -27,12 +28,17 @@ import xdean.annotation.processor.toolkit.annotation.MetaFor;
 import xdean.annotation.processor.toolkit.annotation.SupportedMetaAnnotation;
 
 public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstractProcessor {
-  protected final Class<T> metaClass;
-  protected final NestCompileFile metaFile;
-  protected final Set<String> annotatedAnnotationNames;
+  protected Class<T> metaClass;
+  protected NestCompileFile metaFile;
+  protected Set<TypeElement> nestMetaAnnotations;
 
-  @SuppressWarnings("unchecked")
   public AbstractMetaProcessor() {
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public synchronized void init(ProcessingEnvironment processingEnv) {
+    super.init(processingEnv);
     SupportedMetaAnnotation meta = this.getClass().getAnnotation(SupportedMetaAnnotation.class);
     if (meta == null) {
       throw new Error("AbstractMetaProcessor must use with @SupportedMetaAnnotation.");
@@ -42,7 +48,7 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
     metaClass = (Class<T>) meta.value();
     metaFile = new NestCompileFile(metaPath(metaClass));
     try {
-      annotatedAnnotationNames = metaFile.readLines().collect(Collectors.toSet());
+      nestMetaAnnotations = metaFile.readLines().map(elements::getTypeElement).collect(Collectors.toSet());
     } catch (IOException e) {
       throw new Error("Fail to read meta file.", e);
     }
@@ -72,7 +78,7 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
       roundEnv.getElementsAnnotatedWith(actual).forEach(
           e -> handleAssert(() -> process(roundEnv, meta, ElementUtil.getAnnotationMirror(e, actualType).get(), e)));
     }));
-    annotatedAnnotationNames.stream().map(s -> elements.getTypeElement(s))
+    nestMetaAnnotations.stream()
         .forEach(te -> handleAssert(() -> {
           T meta = te.getAnnotation(metaClass);
           TypeElement actual = handleMetaFor(te);
@@ -116,7 +122,15 @@ public abstract class AbstractMetaProcessor<T extends Annotation> extends XAbstr
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    Set<String> set = new HashSet<>(annotatedAnnotationNames);
+    Set<String> set = new HashSet<>();
+    nestMetaAnnotations.forEach(s -> {
+      MetaFor metaFor = s.getAnnotation(MetaFor.class);
+      if (metaFor == null) {
+        set.add(s.getQualifiedName().toString());
+      } else {
+        set.add(ElementUtil.getAnnotationClassValue(elements, metaFor, m -> m.value()).toString());
+      }
+    });
     set.add(metaClass.getCanonicalName());
     return set;
   }
