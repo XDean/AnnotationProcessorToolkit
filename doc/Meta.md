@@ -1,6 +1,13 @@
 # Meta-Annotation
 
-Meta annotation is annotation for annotation. Java provides [several default meta-annotation](https://en.wikibooks.org/wiki/Java_Programming/Annotations/Meta-Annotations). In this framework, you can use `@Meta` and `AbstractMetaProcessor` to quick build `Processor` for meta-annotation.
+Meta annotation is annotation for annotation. Java provides [several default meta-annotation](https://en.wikibooks.org/wiki/Java_Programming/Annotations/Meta-Annotations). In this framework, you can use `@Meta` and `AbstractMetaProcessor` to quick build `Processor` for meta-annotation. And use `@MetaFor` to add meta annotations on annotations that you can't modify.
+
+- [Define meta-annotation](#define-a-meta-annotation)
+- [Use meta-annotation](#use-meta-annotation)
+  - [Direct use](#direct-use)
+  - [Meta use](#meta-use)
+- [Use `@MetaFor`](#metafor)
+- [Write processor](#write-meta-annotation-processor)
 
 # Define a meta-annotation
 
@@ -19,7 +26,7 @@ Meta annotation is annotation for annotation. Java provides [several default met
 
 # Use meta-annotation
 
-1. Use directly like common annotation
+### Direct Use
 
 ```java
 @MetaAnno(1)
@@ -28,7 +35,7 @@ public void func(){
 }
 ```
 
-2. Use on another annotation
+### Meta Use
 
 ```java
 @MetaAnno(2)
@@ -39,7 +46,20 @@ public void func(){
 
 now every where use `@UseMetaAnno` implies `@MetaAnno(2)`.
 
-# Write a meta-annotation processor
+# `@MetaFor`
+
+Since some third party code is hard to modify. You can use `@MetaFor` to add meta-annotation on them.
+
+```java
+@MetaFor(org.junit.Test.class)
+@CheckMethod(argCount=0)
+public @interface JUnitTestMeta{
+}
+```
+
+now it is equals to add `@CheckMethod` on `@Test`
+
+# Write meta-annotation processor
 
 ## Create class
 
@@ -88,9 +108,4 @@ For samples at [Use meta-annotation](#use-meta-annotation)
 2. for usage 2, it will call `processMeta(env, @MetaAnno(2), 'UseMetaAnno' type element)`
 
 This method is usually use to check the meta-annotation itself is well defined.
-
- 
- 
- 
- 
  
