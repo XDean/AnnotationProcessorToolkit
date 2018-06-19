@@ -33,6 +33,8 @@ public interface CommonUtil {
       Map<String, String> env = new HashMap<>();
       env.put("create", "true");
       FileSystems.newFileSystem(uri, env);
+    } catch (Exception e) {
+      // ignore other exceptions
     }
   }
 
