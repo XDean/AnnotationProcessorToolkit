@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public interface CommonUtil {
+interface CommonUtil {
   static String getStackTraceString(Throwable tr) {
     if (tr == null) {
       return "";
@@ -39,11 +39,11 @@ public interface CommonUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Throwable, R> R throwAsUncheck(Throwable t) throws T {
+  static <T extends Throwable, R> R throwAsUncheck(Throwable t) throws T {
     throw (T) t;
   }
 
-  public static void uncheck(ActionE0<?> task) {
+  static void uncheck(ActionE0<?> task) {
     try {
       task.call();
     } catch (Exception t) {
@@ -51,7 +51,7 @@ public interface CommonUtil {
     }
   }
 
-  public static <T> T uncheck(FuncE0<T, ?> task) {
+  static <T> T uncheck(FuncE0<T, ?> task) {
     try {
       return task.call();
     } catch (Exception t) {
@@ -59,14 +59,14 @@ public interface CommonUtil {
     }
   }
 
-  public static <T> void uncatch(ActionE0<?> task) {
+  static <T> void uncatch(ActionE0<?> task) {
     try {
       task.call();
     } catch (Exception t) {
     }
   }
 
-  public static <T> T uncatch(FuncE0<T, ?> task) {
+  static <T> T uncatch(FuncE0<T, ?> task) {
     try {
       return task.call();
     } catch (Exception t) {
@@ -75,12 +75,12 @@ public interface CommonUtil {
   }
 
   @FunctionalInterface
-  public interface ActionE0<E extends Exception> {
+  interface ActionE0<E extends Exception> {
     void call() throws E;
   }
 
   @FunctionalInterface
-  public interface FuncE0<R, E extends Exception> extends Callable<R> {
+  interface FuncE0<R, E extends Exception> extends Callable<R> {
     @Override
     R call() throws E;
   }
