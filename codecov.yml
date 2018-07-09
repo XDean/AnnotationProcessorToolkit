@@ -27,5 +27,6 @@ comment:
   
 ignore:
 #generated
+  - "src/main/java/xdean/annotation/processor/toolkit/AssertException.java"
   - "src/main/java/xdean/annotation/processor/toolkit/CommonUtil.java"
 #end
