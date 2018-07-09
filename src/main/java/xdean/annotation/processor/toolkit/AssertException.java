@@ -1,5 +1,8 @@
 package xdean.annotation.processor.toolkit;
 
+import xdean.codecov.CodecovIgnore;
+
+@CodecovIgnore
 public class AssertException extends RuntimeException {
   public AssertException() {
     super();

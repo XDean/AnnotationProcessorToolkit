@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-interface CommonUtil {
+public interface CommonUtil {
   static String getStackTraceString(Throwable tr) {
     if (tr == null) {
       return "";
